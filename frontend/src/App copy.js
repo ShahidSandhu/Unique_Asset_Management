@@ -11,25 +11,41 @@ import {
   FormControl,
   Badge,
   Button,
-  Table,
 } from "react-bootstrap";
 import {
   FaHome,
   FaChartBar,
   FaCogs,
   FaUser,
+  FaSignOutAlt,
   FaBars,
   FaBell,
   FaUserCircle,
   FaSearch,
-  FaEdit,
-  FaTrashAlt,
 } from "react-icons/fa";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import axios from "axios";
 
+
+
 function Assets() {
+  return <h2>Assets Content</h2>;
+}
+
+function Settings() {
+  return <h2>Settings Content</h2>;
+}
+
+function Profile() {
+  return <h2>Profile Content</h2>;
+}
+
+function App() {
+  const [isSidebarOpen, setSidebarOpen] = useState(true);
+  const [notifications, setNotifications] = useState(3); // Sample notification count
+  const user = { name: "John Doe" };
+  
   const [assets, setAssets] = useState([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -40,7 +56,6 @@ function Assets() {
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
-  // Fetch assets data on load
   useEffect(() => {
     fetchAssets();
   }, []);
@@ -60,7 +75,14 @@ function Assets() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const assetData = { name, description, serial_number: serialNumber, value };
+
+    const assetData = {
+      name,
+      description,
+      serial_number: serialNumber,
+      value,
+    };
+
     setLoading(true);
     setError("");
     setSuccessMessage("");
@@ -97,6 +119,7 @@ function Assets() {
     setLoading(true);
     setError("");
     setSuccessMessage("");
+
     try {
       await axios.delete(`http://127.0.0.1:8000/api/assets/${id}/`);
       setSuccessMessage("Asset deleted successfully");
@@ -117,113 +140,12 @@ function Assets() {
   };
 
   return (
-    <div>
-      <h2>Assets Management</h2>
-      {loading && <p>Loading...</p>}
-      {error && <p className="text-danger">{error}</p>}
-      {successMessage && <p className="text-success">{successMessage}</p>}
-
-      <Form onSubmit={handleSubmit} className="mb-4">
-        <Form.Group className="mb-3">
-          <Form.Label>Name</Form.Label>
-          <Form.Control
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label>Description</Form.Label>
-          <Form.Control
-            type="text"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-          />
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label>Serial Number</Form.Label>
-          <Form.Control
-            type="text"
-            value={serialNumber}
-            onChange={(e) => setSerialNumber(e.target.value)}
-            required
-          />
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label>Value</Form.Label>
-          <Form.Control
-            type="number"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            required
-          />
-        </Form.Group>
-        <Button variant="primary" type="submit">
-          {editingId ? "Update Asset" : "Add Asset"}
-        </Button>
-        <Button variant="secondary" onClick={resetForm} className="ms-2">
-          Reset
-        </Button>
-      </Form>
-
-      <Table striped bordered hover className="mt-4">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Serial Number</th>
-            <th>Value</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {assets.map((asset) => (
-            <tr key={asset.id}>
-              <td>{asset.name}</td>
-              <td>{asset.description}</td>
-              <td>{asset.serial_number}</td>
-              <td>{asset.value}</td>
-              <td>
-                <Button
-                  variant="warning"
-                  size="sm"
-                  onClick={() => handleEdit(asset)}
-                  className="me-2"
-                >
-                  <FaEdit />
-                </Button>
-                <Button
-                  variant="danger"
-                  size="sm"
-                  onClick={() => handleDelete(asset.id)}
-                >
-                  <FaTrashAlt />
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-    </div>
-  );
-}
-
-function App() {
-  const [isSidebarOpen, setSidebarOpen] = useState(true);
-  const [user, setUser] = useState({ name: "John Doe", loggedIn: true }); // Example user data
-
-  const handleLogout = () => {
-    setUser({ ...user, loggedIn: false });
-    alert("Logged out successfully");
-  };
-
-  return (
     <Router>
       <div className="dashboard">
+        {/* Top Navbar */}
         <Navbar bg="dark" variant="dark" expand="lg" className="navbar">
           <Container fluid>
+            {/* Sidebar Toggle Button */}
             <Button
               variant="outline-light"
               className="me-2 toggle-button"
@@ -232,6 +154,7 @@ function App() {
               <FaBars />
             </Button>
             <Navbar.Brand href="#">Advanced Dashboard</Navbar.Brand>
+            {/* Search Bar */}
             <Form className="d-flex mx-auto">
               <FormControl
                 type="search"
@@ -243,37 +166,67 @@ function App() {
                 <FaSearch />
               </Button>
             </Form>
+            {/* Right Side of Navbar */}
             <Nav className="ms-auto">
-              {user.loggedIn ? (
-                <>
-                  <Nav.Link className="text-light">{user.name}</Nav.Link>
-                  <Nav.Link className="text-light" onClick={handleLogout}>
-                    Logout
-                  </Nav.Link>
-                </>
-              ) : (
-                <Nav.Link as={Link} to="/login" className="text-light">
-                  Login
-                </Nav.Link>
-              )}
+              {/* Notifications Icon */}
+              <Nav.Link
+                href="#notifications"
+                className="text-light position-relative"
+              >
+                <FaBell />
+                {notifications > 0 && (
+                  <Badge
+                    bg="danger"
+                    pill
+                    className="position-absolute top-0 start-100 translate-middle"
+                  >
+                    {notifications}
+                  </Badge>
+                )}
+              </Nav.Link>
+              {/* User Profile Dropdown */}
+              <Dropdown align="end">
+                <Dropdown.Toggle
+                  variant="dark"
+                  id="dropdown-basic"
+                  className="d-flex align-items-center"
+                >
+                  <FaUserCircle size="1.5em" className="me-2" />
+                  <span>{user.name}</span>
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item href="#profile">Profile</Dropdown.Item>
+                  <Dropdown.Item href="#settings">Settings</Dropdown.Item>
+                  <Dropdown.Divider />
+                  <Dropdown.Item href="#logout">Logout</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
             </Nav>
           </Container>
         </Navbar>
-
+        {/* Sidebar and Main Content */}
         <Container fluid className="main-container">
           <Row>
+            {/* Sidebar */}
             {isSidebarOpen && (
               <Col md={2} className="sidebar bg-dark">
                 <Nav className="flex-column">
-                  <Nav.Link as={Link} to="/assets" className="sidebar-link">
-                    <FaHome className="me-2" /> Assets
+                  <Nav.Link as={Link} to="/home" className="sidebar-link">
+                    <FaHome className="me-2" /> Home
+                  </Nav.Link>
+                  <Nav.Link as={Link} to="/dashboard" className="sidebar-link">
+                    <FaChartBar className="me-2" /> Dashboard
                   </Nav.Link>
                   <Nav.Link as={Link} to="/settings" className="sidebar-link">
                     <FaCogs className="me-2" /> Settings
                   </Nav.Link>
+                  <Nav.Link as={Link} to="/profile" className="sidebar-link">
+                    <FaUser className="me-2" /> Profile
+                  </Nav.Link>
                 </Nav>
               </Col>
             )}
+            {/* Main Content */}
             <Col
               md={isSidebarOpen ? 10 : 12}
               className={`main-content ${
@@ -282,7 +235,8 @@ function App() {
             >
               <Routes>
                 <Route path="/assets" element={<Assets />} />
-                {/* Add login and other routes as needed */}
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/profile" element={<Profile />} />
               </Routes>
             </Col>
           </Row>

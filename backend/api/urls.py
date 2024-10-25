@@ -5,6 +5,8 @@ from .views import EmployeeListCreate, EmployeeDetail, AssetListCreate, AssetDet
 from .views import index
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+from django.urls import path
+from . import views
 from .views import (
     AssetCategoryViewSet,
     AssetVendorViewSet,
@@ -13,7 +15,7 @@ from .views import (
     AssetStatusViewSet,
     DepartmentViewSet,
     EmployeeViewSet,
-    AssetViewSet
+    AssetViewSet,
 )
 
 router = DefaultRouter()
@@ -39,4 +41,8 @@ urlpatterns = [
     path('employees/<uuid:pk>/', EmployeeDetail.as_view(), name='employee-detail'),
     path('api/', include(router.urls)),
     path('', index, name='index'),
+    # path('api/home/', views.HomeView.as_view(), name='home'),
+    # path('api/dashboard/', views.DashboardView.as_view(), name='dashboard'),
+    # path('api/settings/', views.SettingsView.as_view(), name='settings'),
+    # path('api/profile/', views.ProfileView.as_view(), name='profile'),
 ]
