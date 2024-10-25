@@ -1,11 +1,10 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from .views import UserRegistrationView
+from .views import UserRegistrationView, UserProfileView
 from .views import EmployeeListCreate, EmployeeDetail, AssetListCreate, AssetDetail
 from .views import index
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from django.urls import path
 from . import views
 from .views import (
     AssetCategoryViewSet,
@@ -16,6 +15,11 @@ from .views import (
     DepartmentViewSet,
     EmployeeViewSet,
     AssetViewSet,
+)
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
 )
 
 router = DefaultRouter()
@@ -30,9 +34,12 @@ router.register(r'assets', AssetViewSet)
 
 
 urlpatterns = [
+    path("register/", UserRegistrationView.as_view(), name="register"),
+    path("login/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('register/', UserRegistrationView.as_view(), name='user-registration'),
+    # path('register/', UserRegistrationView.as_view(), name='user-registration'),
     # Asset URLs
     path('assets/', AssetListCreate.as_view(), name='asset-list-create'),
     path('assets/<uuid:pk>/', AssetDetail.as_view(), name='asset-detail'),
@@ -41,8 +48,10 @@ urlpatterns = [
     path('employees/<uuid:pk>/', EmployeeDetail.as_view(), name='employee-detail'),
     path('api/', include(router.urls)),
     path('', index, name='index'),
-    # path('api/home/', views.HomeView.as_view(), name='home'),
-    # path('api/dashboard/', views.DashboardView.as_view(), name='dashboard'),
-    # path('api/settings/', views.SettingsView.as_view(), name='settings'),
-    # path('api/profile/', views.ProfileView.as_view(), name='profile'),
+    path('api/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
+    # path('api/profile/', UserProfileView.as_view(), name='user-profile'),
+    path('profile/', UserProfileView.as_view(), name='user-profile'),
+    
 ]
