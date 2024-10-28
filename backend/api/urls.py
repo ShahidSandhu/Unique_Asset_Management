@@ -1,39 +1,42 @@
 from django.urls import path
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from .views import UserRegistrationView, UserProfileView
-from .views import EmployeeListCreate, EmployeeDetail, AssetListCreate, AssetDetail
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 from .views import index
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from . import views
 from .views import (
-    AssetCategoryViewSet,
-    AssetVendorViewSet,
-    AssetMakeViewSet,
-    AssetModelViewSet,
-    AssetStatusViewSet,
-    DepartmentViewSet,
-    EmployeeViewSet,
-    AssetViewSet,
-)
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView,
+    VendorListCreateView, VendorDetailView, MakeListCreateView, MakeDetailView,
+    ModelListCreateView, ModelDetailView, StatusListCreateView, StatusDetailView,
+    DepartmentListCreateView, DepartmentDetailView, EmployeeListCreateView, EmployeeDetailView,
+    CategoryListCreateView, CategoryDetailView, AssetListCreateView, AssetDetailView,
+    UserRegistrationView, UserProfileView
 )
 
-router = DefaultRouter()
-router.register(r'asset-categories', AssetCategoryViewSet)
-router.register(r'asset-vendors', AssetVendorViewSet)
-router.register(r'asset-makes', AssetMakeViewSet)
-router.register(r'asset-models', AssetModelViewSet)
-router.register(r'asset-statuses', AssetStatusViewSet)
-router.register(r'departments', DepartmentViewSet)
-router.register(r'employees', EmployeeViewSet)
-router.register(r'assets', AssetViewSet)
+
+
+# from .views import (AssetViewSet,
+                    # CategoryViewSet,
+                    # VendorViewSet,
+                    # MakeViewSet,
+                    # ModelViewSet,
+                    # StatusViewSet,
+                    # DepartmentViewSet,
+                    # EmployeeViewSet,
+                    # AssetViewSet,)
+
+# router = DefaultRouter()
+# router.register(r'asset-categories', CategoryViewSet)
+# router.register(r'asset-vendors', VendorViewSet)
+# router.register(r'asset-makes', MakeViewSet)
+# router.register(r'asset-models', ModelViewSet)
+# router.register(r'asset-statuses', StatusViewSet)
+# router.register(r'departments', DepartmentViewSet)
+# router.register(r'employees', EmployeeViewSet)
+# router.register(r'assets', AssetViewSet)
+
 
 
 urlpatterns = [
+    # path('api/', include(router.urls)),
     path("register/", UserRegistrationView.as_view(), name="register"),
     path("login/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
@@ -41,17 +44,37 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     # path('register/', UserRegistrationView.as_view(), name='user-registration'),
     # Asset URLs
-    path('assets/', AssetListCreate.as_view(), name='asset-list-create'),
-    path('assets/<uuid:pk>/', AssetDetail.as_view(), name='asset-detail'),
+    path('assets/', AssetListCreateView.as_view(), name='asset-list-create'),
+    path('assets/<uuid:pk>/', AssetDetailView.as_view(), name='asset-detail'),
     # Employee URLs
-    path('employees/', EmployeeListCreate.as_view(), name='employee-list-create'),
-    path('employees/<uuid:pk>/', EmployeeDetail.as_view(), name='employee-detail'),
-    path('api/', include(router.urls)),
+    path('employees/', EmployeeListCreateView.as_view(), name='employee-list-create'),
+    path('employees/<uuid:pk>/', EmployeeDetailView.as_view(), name='employee-detail'),
+    
     path('', index, name='index'),
-    path('api/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-    # path('api/profile/', UserProfileView.as_view(), name='user-profile'),
+    path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # path('api-token-auth/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),
     path('profile/', UserProfileView.as_view(), name='user-profile'),
     
+    path('categories/', CategoryListCreateView.as_view(), name='Category-list-create'),
+    path('categories/<uuid:pk>/', CategoryDetailView.as_view(), name='Category-detail'),
+    
+    # Vendor routes
+    path('vendors/', VendorListCreateView.as_view(), name='vendor-list-create'),
+    path('vendors/<int:pk>/', VendorDetailView.as_view(), name='vendor-detail'),
+    # Make routes
+    path('makes/', MakeListCreateView.as_view(), name='make-list-create'),
+    path('makes/<int:pk>/', MakeDetailView.as_view(), name='make-detail'),
+    # Model routes
+    path('models/', ModelListCreateView.as_view(), name='model-list-create'),
+    path('models/<int:pk>/', ModelDetailView.as_view(), name='model-detail'),
+    # Status routes
+    path('statuses/', StatusListCreateView.as_view(), name='status-list-create'),
+    path('statuses/<int:pk>/', StatusDetailView.as_view(), name='status-detail'),
+    # Department routes
+    path('departments/', DepartmentListCreateView.as_view(), name='department-list-create'),
+    path('departments/<int:pk>/', DepartmentDetailView.as_view(), name='department-detail'),
 ]
+
+

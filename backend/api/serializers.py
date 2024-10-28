@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from .models import Asset, AssetCategory, AssetVendor, AssetMake, AssetModel, AssetStatus, Employee
+from .models import Asset, Category, Vendor, Make, Model, Status, Employee
 from django.contrib.auth.models import User
-from .models import AssetCategory, AssetVendor, AssetMake, AssetModel, AssetStatus, Department, Employee, Asset
+from .models import Category, Vendor, Make, Model, Status, Department, Employee, Asset
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -21,29 +21,29 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-class AssetCategorySerializer(serializers.ModelSerializer):
+class CategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = AssetCategory
+        model = Category
         fields = '__all__'
 
-class AssetVendorSerializer(serializers.ModelSerializer):
+class VendorSerializer(serializers.ModelSerializer):
     class Meta:
-        model = AssetVendor
+        model = Vendor
         fields = '__all__'
 
-class AssetMakeSerializer(serializers.ModelSerializer):
+class MakeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = AssetMake
+        model = Make
         fields = '__all__'
 
-class AssetModelSerializer(serializers.ModelSerializer):
+class ModelSerializer(serializers.ModelSerializer):
     class Meta:
-        model = AssetModel
+        model = Model
         fields = '__all__'
 
-class AssetStatusSerializer(serializers.ModelSerializer):
+class StatusSerializer(serializers.ModelSerializer):
     class Meta:
-        model = AssetStatus
+        model = Status
         fields = '__all__'
 
 class DepartmentSerializer(serializers.ModelSerializer):
@@ -96,3 +96,5 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = User
         fields = ["username", "email", "first_name", "last_name"]
         read_only_fields = ["username"]  # Username is read-only in this case
+
+

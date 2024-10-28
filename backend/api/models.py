@@ -2,36 +2,36 @@ from django.db import models
 import uuid
 
 
-class AssetCategory(models.Model):
+class Category(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
 
-class AssetVendor(models.Model):
+class Vendor(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
 
-class AssetMake(models.Model):
+class Make(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
         return self.name
 
-class AssetModel(models.Model):
+class Model(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, unique=True)
-    make = models.ForeignKey(AssetMake, related_name="models", on_delete=models.CASCADE)  # One make can have many models
+    make = models.ForeignKey(Make, related_name="models", on_delete=models.CASCADE)  # One make can have many models
 
     def __str__(self):
         return f"{self.make.name} - {self.name}"
 
-class AssetStatus(models.Model):
+class Status(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     status = models.CharField(max_length=50, unique=True)
 
@@ -77,16 +77,17 @@ class Asset(models.Model):
     barcode = models.CharField(max_length=200, unique=True, blank=True, null=True)  # Optional barcode
     date_acquired = models.DateField(null=True, blank=True)  # Date when the asset was acquired
     date_disposed = models.DateField(null=True, blank=True)  # Date when the asset was disposed (optional)
-    category = models.ForeignKey(AssetCategory, related_name="assets", on_delete=models.SET_NULL, null=True, blank=True)  # One category can have many assets
-    vendor = models.ForeignKey(AssetVendor, related_name="assets", on_delete=models.SET_NULL, null=True, blank=True)  # One vendor can have many assets
-    make = models.ForeignKey(AssetMake, related_name="assets", on_delete=models.SET_NULL, null=True, blank=True)  # One make can have many assets
-    model = models.ForeignKey(AssetModel, related_name="assets", on_delete=models.SET_NULL, null=True, blank=True)  # One model can have many assets
-    status = models.ForeignKey(AssetStatus, related_name="assets", on_delete=models.SET_NULL, null=True, blank=True)  # One status can be associated with many assets
+    category = models.ForeignKey(Category, related_name="assets", on_delete=models.SET_NULL, null=True, blank=True)  # One category can have many assets
+    vendor = models.ForeignKey(Vendor, related_name="assets", on_delete=models.SET_NULL, null=True, blank=True)  # One vendor can have many assets
+    make = models.ForeignKey(Make, related_name="assets", on_delete=models.SET_NULL, null=True, blank=True)  # One make can have many assets
+    model = models.ForeignKey(Model, related_name="assets", on_delete=models.SET_NULL, null=True, blank=True)  # One model can have many assets
+    status = models.ForeignKey(Status, related_name="assets", on_delete=models.SET_NULL, null=True, blank=True)  # One status can be associated with many assets
+    department = models.ForeignKey(Department, related_name="assets", on_delete=models.SET_NULL, null=True, blank=True)
     employee = models.ForeignKey(Employee, related_name="assets", on_delete=models.SET_NULL, null=True, blank=True)  # One employee can have many assets
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     update_count = models.IntegerField(default=0)  # To track how many times the asset has been updated
-    employee = models.ForeignKey(Employee, related_name="assets", on_delete=models.SET_NULL, null=True, blank=True)
+    
 
     def save(self, *args, **kwargs):
         if self.asset_number is None:  # Ensure asset_number is only set if it's not already defined
@@ -102,37 +103,38 @@ class Asset(models.Model):
 
     def __str__(self):
         return self.name
-class Employee(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    given_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
-    position = models.CharField(max_length=100)
-    
-    hire_date = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+# class Employee(models.Model):
+    # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    # given_name = models.CharField(max_length=100)
+    # last_name = models.CharField(max_length=100)
+    # email = models.EmailField(unique=True)
+    # position = models.CharField(max_length=100)
+    # 
+    # hire_date = models.DateTimeField(auto_now_add=True)
+    # updated_at = models.DateTimeField(auto_now=True)
+# 
+    # def __str__(self):
+        # return f"{self.given_name} {self.last_name}"
 
-    def __str__(self):
-        return f"{self.given_name} {self.last_name}"
-
-class Asset(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    serial_number = models.CharField(max_length=100, unique=True)
-    barcode = models.CharField(max_length=100, unique=True, blank=True, null=True)
-    date_acquired = models.DateField(null=True, blank=True)
-    date_disposed = models.DateField(null=True, blank=True)
-    name = models.CharField(max_length=100)
-    description = models.TextField()
-    value = models.DecimalField(max_digits=10, decimal_places=2)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    update_count = models.IntegerField(default=0)
-
-    def save(self, *args, **kwargs):
-        if self.pk is not None:
-            self.update_count += 1
-        super(Asset, self).save(*args, **kwargs)
-
-    def __str__(self):
-        return self.name
-
+# class Asset(models.Model):
+    # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    # serial_number = models.CharField(max_length=100, unique=True)
+    # barcode = models.CharField(max_length=100, unique=True, blank=True, null=True)
+    # date_acquired = models.DateField(null=True, blank=True)
+    # date_disposed = models.DateField(null=True, blank=True)
+    # name = models.CharField(max_length=100)
+    # description = models.TextField()
+    # value = models.DecimalField(max_digits=10, decimal_places=2)
+    # created_at = models.DateTimeField(auto_now_add=True)
+    # updated_at = models.DateTimeField(auto_now=True)
+    # update_count = models.IntegerField(default=0)
+# 
+    # def save(self, *args, **kwargs):
+        # if self.pk is not None:
+            # self.update_count += 1
+        # super(Asset, self).save(*args, **kwargs)
+# 
+    # def __str__(self):
+        # return self.name
+# 
+# 
