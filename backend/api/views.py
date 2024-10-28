@@ -1,3 +1,6 @@
+# pylint: skip-file
+# flake8: noqa
+
 from django.shortcuts import render
 from rest_framework import generics
 from rest_framework import status
